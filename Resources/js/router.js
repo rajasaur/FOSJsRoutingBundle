@@ -258,3 +258,40 @@ fos.Router.prototype.generate = function(name, opt_params, absolute) {
 
     return url;
 };
+
+/**
+ * Generates the URL for angular route. Of the format /demo/hello/{name}
+ *
+ * @param {string} name
+ * @param {boolean} regex
+ * @return {string}
+ */
+fos.Router.prototype.generateAngularRoute = function(name, regex) {
+    var route = (this.getRoute(name)),
+        url = '',
+        host = '';
+
+    goog.array.forEach(route.tokens, function(token) {
+        if ('text' === token[0]) {
+            url = token[1] + url;
+            return;
+        }
+
+        if ('variable' === token[0]) {
+            url = '/{' + token[3] + '}' + url;
+            return;
+        }
+
+        throw new Error('The token type "' + token[0] + '" is not supported.');
+    });
+
+    if (url === '') {
+        url = '/';
+    }
+
+    if (regex) {
+        url = '^' + url;
+    }
+
+    return url;
+};
